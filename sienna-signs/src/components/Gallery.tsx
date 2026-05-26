@@ -7,63 +7,23 @@ const TABS = ['All', 'Fabric', 'Acrylic'] as const
 type Tab = typeof TABS[number]
 
 const ITEMS = [
-  {
-    src: '/Media/Linen sign.jpg',
-    label: 'Welcome Sign',
-    material: 'Fabric',
-    tag: 'Fabric' as Tab,
-    size: 'large',
-    price: 'From £120',
-  },
-  {
-    src: '/Media/Welcome Sign.jpg',
-    label: 'Welcome Sign',
-    material: 'Acrylic',
-    tag: 'Acrylic' as Tab,
-    size: 'small',
-    price: 'From £105',
-  },
-  {
-    src: '/Media/Seating chart.jpg',
-    label: 'Seating Chart',
-    material: 'Fabric',
-    tag: 'Fabric' as Tab,
-    size: 'small',
-    price: 'From £160',
-  },
-  {
-    src: '/Media/Order of Service.jpg',
-    label: 'Order of Service',
-    material: 'Fabric',
-    tag: 'Fabric' as Tab,
-    size: 'small',
-    price: 'From £120',
-  },
-  {
-    src: '/Media/Table Numbers.JPG',
-    label: 'Table Numbers',
-    material: 'Fabric',
-    tag: 'Acrylic' as Tab,
-    size: 'small',
-    price: 'From £8 each',
-  },
-  {
-    src: '/Media/Ribbon signs.jpg',
-    label: 'Ribbon Styling',
-    material: 'Fabric',
-    tag: 'Fabric' as Tab,
-    size: 'small',
-    price: 'From £5',
-  },
+  { src: '/Media/Linen sign.jpg', label: 'Welcome Sign', material: 'Fabric', tag: 'Fabric' as Tab, price: 'From £120' },
+  { src: '/Media/Welcome Sign.jpg', label: 'Welcome Sign', material: 'Acrylic', tag: 'Acrylic' as Tab, price: 'From £105' },
+  { src: '/Media/Seating chart.jpg', label: 'Seating Chart', material: 'Fabric', tag: 'Fabric' as Tab, price: 'From £160' },
+  { src: '/Media/Order of Service.jpg', label: 'Order of Service', material: 'Fabric', tag: 'Fabric' as Tab, price: 'From £120' },
+  { src: '/Media/Table Numbers.JPG', label: 'Table Numbers', material: 'Fabric', tag: 'Fabric' as Tab, price: 'From £8 each' },
+  { src: '/Media/Ribbon signs.jpg', label: 'Ribbon Styling', material: 'Fabric', tag: 'Fabric' as Tab, price: 'From £5' },
 ]
 
 export default function Gallery() {
   const ref = useRef<HTMLElement>(null)
   const [visible, setVisible] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const [hovered, setHovered] = useState<number | null>(null)
   const [activeTab, setActiveTab] = useState<Tab>('All')
 
   useEffect(() => {
+    setMounted(true)
     const observer = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) setVisible(true) },
       { threshold: 0.1 }
@@ -72,6 +32,7 @@ export default function Gallery() {
     return () => observer.disconnect()
   }, [])
 
+  const show = mounted && visible
   const filtered = ITEMS.filter((item) => activeTab === 'All' || item.tag === activeTab)
 
   return (
@@ -83,46 +44,36 @@ export default function Gallery() {
         background: 'var(--linen)',
       }}
     >
-      {/* Header */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'flex-end',
-          justifyContent: 'space-between',
-          marginBottom: '48px',
-          opacity: visible ? 1 : 0,
-          transform: visible ? 'translateY(0)' : 'translateY(20px)',
-          transition: 'opacity 0.7s ease, transform 0.7s ease',
-        }}
-      >
+      <div style={{
+        display: 'flex',
+        alignItems: 'flex-end',
+        justifyContent: 'space-between',
+        marginBottom: '48px',
+        opacity: show ? 1 : 0,
+        transform: show ? 'translateY(0)' : 'translateY(20px)',
+        transition: 'opacity 0.7s ease, transform 0.7s ease',
+      }}>
         <div>
-          <p
-            style={{
-              fontSize: '9px',
-              letterSpacing: '0.35em',
-              textTransform: 'uppercase',
-              color: 'var(--muted)',
-              marginBottom: '16px',
-            }}
-          >
-            Our work
-          </p>
-          <h2
-            style={{
-              fontFamily: 'var(--serif)',
-              fontSize: 'clamp(36px, 4vw, 56px)',
-              fontWeight: 300,
-              fontStyle: 'italic',
-              color: 'var(--ink)',
-              lineHeight: 1.05,
-              margin: 0,
-            }}
-          >
+          <p style={{
+            fontSize: '9px',
+            letterSpacing: '0.35em',
+            textTransform: 'uppercase',
+            color: 'var(--muted)',
+            marginBottom: '16px',
+          }}>Our work</p>
+          <h2 style={{
+            fontFamily: 'var(--serif)',
+            fontSize: 'clamp(36px, 4vw, 56px)',
+            fontWeight: 300,
+            fontStyle: 'italic',
+            color: 'var(--ink)',
+            lineHeight: 1.05,
+            margin: 0,
+          }}>
             Crafted with<br />intention.
           </h2>
         </div>
-
-        {/* Instagram Link */}
+        
         <a
           href="https://www.instagram.com/sienna_signs/"
           target="_blank"
@@ -152,17 +103,14 @@ export default function Gallery() {
       </div>
 
       {/* Filter tabs */}
-      <div
-        style={{
-          display: 'flex',
-          gap: '0',
-          marginBottom: '32px',
-          border: '0.5px solid var(--border)',
-          width: 'fit-content',
-          opacity: visible ? 1 : 0,
-          transition: 'opacity 0.7s ease 0.1s',
-        }}
-      >
+      <div style={{
+        display: 'flex',
+        marginBottom: '32px',
+        border: '0.5px solid var(--border)',
+        width: 'fit-content',
+        opacity: show ? 1 : 0,
+        transition: 'opacity 0.7s ease 0.1s',
+      }}>
         {TABS.map((tab) => (
           <button
             key={tab}
@@ -185,15 +133,13 @@ export default function Gallery() {
         ))}
       </div>
 
-      {/* Gallery Grid */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: filtered.length > 2 ? '1.5fr 1fr 1fr' : 'repeat(auto-fill, minmax(300px, 1fr))',
-          gridTemplateRows: filtered.length > 3 ? '320px 240px' : '360px',
-          gap: '6px',
-        }}
-      >
+      {/* Grid */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: filtered.length > 2 ? '1.5fr 1fr 1fr' : 'repeat(auto-fill, minmax(300px, 1fr))',
+        gridTemplateRows: filtered.length > 3 ? '320px 240px' : '360px',
+        gap: '6px',
+      }}>
         {filtered.map((item, i) => (
           <div
             key={`${item.src}-${i}`}
@@ -203,8 +149,8 @@ export default function Gallery() {
               overflow: 'hidden',
               border: '0.5px solid var(--sand-dark)',
               cursor: 'pointer',
-              opacity: visible ? 1 : 0,
-              transform: visible ? 'scale(1)' : 'scale(0.97)',
+              opacity: show ? 1 : 0,
+              transform: show ? 'scale(1)' : 'scale(0.97)',
               transition: `opacity 0.6s ease ${i * 0.07}s, transform 0.6s ease ${i * 0.07}s`,
             }}
             onMouseEnter={() => setHovered(i)}
@@ -222,87 +168,50 @@ export default function Gallery() {
               }}
               sizes={i === 0 ? '40vw' : '25vw'}
             />
-
-            {/* Dark scrim on hover */}
-            <div
-              style={{
-                position: 'absolute',
-                inset: 0,
-                background: 'rgba(44,42,37,0.35)',
-                opacity: hovered === i ? 1 : 0,
-                transition: 'opacity 0.35s ease',
-              }}
-            />
-
-            {/* Label — slides up on hover */}
-            <div
-              style={{
-                position: 'absolute',
-                bottom: 0,
-                left: 0,
-                right: 0,
-                padding: '12px 16px',
-                background: 'rgba(253,252,249,0.95)',
-                backdropFilter: 'blur(4px)',
-                borderTop: '0.5px solid var(--border)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                transform: hovered === i ? 'translateY(0)' : 'translateY(100%)',
-                transition: 'transform 0.32s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-              }}
-            >
+            <div style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'rgba(44,42,37,0.35)',
+              opacity: hovered === i ? 1 : 0,
+              transition: 'opacity 0.35s ease',
+            }} />
+            <div style={{
+              position: 'absolute',
+              bottom: 0, left: 0, right: 0,
+              padding: '12px 16px',
+              background: 'rgba(253,252,249,0.95)',
+              backdropFilter: 'blur(4px)',
+              borderTop: '0.5px solid var(--border)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              transform: hovered === i ? 'translateY(0)' : 'translateY(100%)',
+              transition: 'transform 0.32s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+            }}>
               <div>
-                <p
-                  style={{
-                    fontSize: '9px',
-                    letterSpacing: '0.2em',
-                    textTransform: 'uppercase',
-                    color: 'var(--ink)',
-                    marginBottom: '3px',
-                  }}
-                >
+                <p style={{ fontSize: '9px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--ink)', marginBottom: '3px' }}>
                   {item.label}
                 </p>
-                <p
-                  style={{
-                    fontSize: '8px',
-                    letterSpacing: '0.15em',
-                    textTransform: 'uppercase',
-                    color: 'var(--muted)',
-                  }}
-                >
+                <p style={{ fontSize: '8px', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--muted)' }}>
                   {item.material}
                 </p>
               </div>
-              <span
-                style={{
-                  fontSize: '11px',
-                  fontFamily: 'var(--serif)',
-                  fontStyle: 'italic',
-                  color: 'var(--ink)',
-                }}
-              >
+              <span style={{ fontSize: '11px', fontFamily: 'var(--serif)', fontStyle: 'italic', color: 'var(--ink)' }}>
                 {item.price}
               </span>
             </div>
-
-            {/* Material chip */}
-            <div
-              style={{
-                position: 'absolute',
-                top: '14px',
-                right: '14px',
-                background: 'rgba(253,252,249,0.88)',
-                backdropFilter: 'blur(4px)',
-                padding: '4px 10px',
-                fontSize: '7px',
-                letterSpacing: '0.2em',
-                textTransform: 'uppercase',
-                color: 'var(--ink)',
-                border: '0.5px solid rgba(216,210,196,0.6)',
-              }}
-            >
+            <div style={{
+              position: 'absolute',
+              top: '14px', right: '14px',
+              background: 'rgba(253,252,249,0.88)',
+              backdropFilter: 'blur(4px)',
+              padding: '4px 10px',
+              fontSize: '7px',
+              letterSpacing: '0.2em',
+              textTransform: 'uppercase',
+              color: 'var(--ink)',
+              border: '0.5px solid rgba(216,210,196,0.6)',
+            }}>
               {item.material}
             </div>
           </div>

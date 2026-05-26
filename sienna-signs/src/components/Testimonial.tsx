@@ -23,9 +23,11 @@ const TESTIMONIALS = [
 export default function Testimonial() {
   const ref = useRef<HTMLElement>(null)
   const [visible, setVisible] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const [active, setActive] = useState(0)
 
   useEffect(() => {
+    setMounted(true)
     const observer = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) setVisible(true) },
       { threshold: 0.2 }
@@ -34,7 +36,6 @@ export default function Testimonial() {
     return () => observer.disconnect()
   }, [])
 
-  // Auto-rotate
   useEffect(() => {
     const timer = setInterval(() => {
       setActive((prev) => (prev + 1) % TESTIMONIALS.length)
@@ -42,6 +43,7 @@ export default function Testimonial() {
     return () => clearInterval(timer)
   }, [])
 
+  const show = mounted && visible
   const t = TESTIMONIALS[active]
 
   return (
@@ -55,54 +57,42 @@ export default function Testimonial() {
         overflow: 'hidden',
       }}
     >
-      {/* Background large serif number */}
-      <div
-        style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          fontFamily: 'var(--serif)',
-          fontSize: 'clamp(200px, 30vw, 320px)',
-          fontWeight: 300,
-          fontStyle: 'italic',
-          color: 'var(--sand-dark)',
-          opacity: 0.35,
-          lineHeight: 1,
-          pointerEvents: 'none',
-          userSelect: 'none',
-          whiteSpace: 'nowrap',
-        }}
-      >
-        ❝
-      </div>
+      <div style={{
+        position: 'absolute',
+        top: '50%', left: '50%',
+        transform: 'translate(-50%, -50%)',
+        fontFamily: 'var(--serif)',
+        fontSize: 'clamp(200px, 30vw, 320px)',
+        fontWeight: 300,
+        fontStyle: 'italic',
+        color: 'var(--sand-dark)',
+        opacity: 0.35,
+        lineHeight: 1,
+        pointerEvents: 'none',
+        userSelect: 'none',
+        whiteSpace: 'nowrap',
+      }}>❝</div>
 
-      <div
-        style={{
-          position: 'relative',
-          zIndex: 1,
-          maxWidth: '680px',
-          margin: '0 auto',
-          textAlign: 'center',
-          opacity: visible ? 1 : 0,
-          transform: visible ? 'translateY(0)' : 'translateY(24px)',
-          transition: 'opacity 0.8s ease, transform 0.8s ease',
-        }}
-      >
-        {/* Label */}
-        <p
-          style={{
-            fontSize: '9px',
-            letterSpacing: '0.35em',
-            textTransform: 'uppercase',
-            color: 'var(--muted)',
-            marginBottom: '48px',
-          }}
-        >
+      <div style={{
+        position: 'relative',
+        zIndex: 1,
+        maxWidth: '680px',
+        margin: '0 auto',
+        textAlign: 'center',
+        opacity: show ? 1 : 0,
+        transform: show ? 'translateY(0)' : 'translateY(24px)',
+        transition: 'opacity 0.8s ease, transform 0.8s ease',
+      }}>
+        <p style={{
+          fontSize: '9px',
+          letterSpacing: '0.35em',
+          textTransform: 'uppercase',
+          color: 'var(--muted)',
+          marginBottom: '48px',
+        }}>
           What our clients say
         </p>
 
-        {/* Quote — animates on change */}
         <blockquote
           key={active}
           style={{
@@ -119,44 +109,22 @@ export default function Testimonial() {
           {t.quote}
         </blockquote>
 
-        {/* Author */}
-        <div
-          key={`author-${active}`}
-          style={{
-            animation: 'fadeUp 0.5s ease 0.08s both',
-          }}
-        >
-          <p
-            style={{
-              fontSize: '10px',
-              letterSpacing: '0.2em',
-              textTransform: 'uppercase',
-              color: 'var(--ink)',
-              marginBottom: '6px',
-            }}
-          >
+        <div key={`author-${active}`} style={{ animation: 'fadeUp 0.5s ease 0.08s both' }}>
+          <p style={{
+            fontSize: '10px',
+            letterSpacing: '0.2em',
+            textTransform: 'uppercase',
+            color: 'var(--ink)',
+            marginBottom: '6px',
+          }}>
             {t.author}
           </p>
-          <p
-            style={{
-              fontSize: '9px',
-              letterSpacing: '0.15em',
-              color: 'var(--muted)',
-            }}
-          >
+          <p style={{ fontSize: '9px', letterSpacing: '0.15em', color: 'var(--muted)' }}>
             {t.event}
           </p>
         </div>
 
-        {/* Dots */}
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            gap: '10px',
-            marginTop: '48px',
-          }}
-        >
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '48px' }}>
           {TESTIMONIALS.map((_, i) => (
             <button
               key={i}
@@ -174,56 +142,6 @@ export default function Testimonial() {
             />
           ))}
         </div>
-      </div>
-
-      {/* Side decorations */}
-      <div
-        style={{
-          position: 'absolute',
-          left: '80px',
-          top: '50%',
-          transform: 'translateY(-50%)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '8px',
-          opacity: visible ? 0.4 : 0,
-          transition: 'opacity 1s ease 0.4s',
-        }}
-      >
-        {[...Array(5)].map((_, i) => (
-          <div
-            key={i}
-            style={{
-              width: '1px',
-              height: `${24 - i * 4}px`,
-              background: 'var(--muted)',
-            }}
-          />
-        ))}
-      </div>
-      <div
-        style={{
-          position: 'absolute',
-          right: '80px',
-          top: '50%',
-          transform: 'translateY(-50%)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '8px',
-          opacity: visible ? 0.4 : 0,
-          transition: 'opacity 1s ease 0.4s',
-        }}
-      >
-        {[...Array(5)].map((_, i) => (
-          <div
-            key={i}
-            style={{
-              width: '1px',
-              height: `${8 + i * 4}px`,
-              background: 'var(--muted)',
-            }}
-          />
-        ))}
       </div>
 
       <style>{`

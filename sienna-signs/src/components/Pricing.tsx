@@ -53,8 +53,10 @@ const CATEGORIES = [
 export default function Pricing() {
   const ref = useRef<HTMLElement>(null)
   const [visible, setVisible] = useState(false)
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
     const observer = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) setVisible(true) },
       { threshold: 0.1 }
@@ -62,6 +64,8 @@ export default function Pricing() {
     if (ref.current) observer.observe(ref.current)
     return () => observer.disconnect()
   }, [])
+
+  const show = mounted && visible
 
   return (
     <section
@@ -72,107 +76,69 @@ export default function Pricing() {
         background: 'var(--cream)',
       }}
     >
-      {/* Header */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '24px',
-          marginBottom: '16px',
-          opacity: visible ? 1 : 0,
-          transform: visible ? 'translateY(0)' : 'translateY(20px)',
-          transition: 'opacity 0.7s ease, transform 0.7s ease',
-        }}
-      >
-        <p
-          style={{
-            fontSize: '9px',
-            letterSpacing: '0.35em',
-            textTransform: 'uppercase',
-            color: 'var(--muted)',
-            whiteSpace: 'nowrap',
-          }}
-        >
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '24px',
+        marginBottom: '16px',
+        opacity: show ? 1 : 0,
+        transform: show ? 'translateY(0)' : 'translateY(20px)',
+        transition: 'opacity 0.7s ease, transform 0.7s ease',
+      }}>
+        <p style={{ fontSize: '9px', letterSpacing: '0.35em', textTransform: 'uppercase', color: 'var(--muted)', whiteSpace: 'nowrap' }}>
           Investment
         </p>
         <div style={{ flex: 1, height: '0.5px', background: 'var(--border)' }} />
-        <h2
-          style={{
-            fontFamily: 'var(--serif)',
-            fontSize: 'clamp(28px, 3vw, 40px)',
-            fontWeight: 300,
-            fontStyle: 'italic',
-            color: 'var(--ink)',
-            whiteSpace: 'nowrap',
-          }}
-        >
+        <h2 style={{
+          fontFamily: 'var(--serif)',
+          fontSize: 'clamp(28px, 3vw, 40px)',
+          fontWeight: 300,
+          fontStyle: 'italic',
+          color: 'var(--ink)',
+          whiteSpace: 'nowrap',
+        }}>
           Transparent pricing
         </h2>
       </div>
 
-      <p
-        style={{
-          fontSize: '12px',
-          lineHeight: 1.8,
-          color: 'var(--body-text)',
-          marginBottom: '64px',
-          textAlign: 'right',
-          opacity: visible ? 1 : 0,
-          transition: 'opacity 0.7s ease 0.1s',
-        }}
-      >
+      <p style={{
+        fontSize: '12px',
+        lineHeight: 1.8,
+        color: 'var(--body-text)',
+        marginBottom: '64px',
+        textAlign: 'right',
+        opacity: show ? 1 : 0,
+        transition: 'opacity 0.7s ease 0.1s',
+      }}>
         Suitable for weddings, baby showers, hen parties &amp; all events.
         Custom sizes &amp; bespoke designs available on request.
       </p>
 
-      {/* Category grid */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '1px',
-          border: '0.5px solid var(--border)',
-          background: 'var(--border)',
-        }}
-      >
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gap: '1px',
+        border: '0.5px solid var(--border)',
+        background: 'var(--border)',
+      }}>
         {CATEGORIES.map((cat, ci) => (
           <div
             key={cat.name}
             style={{
               background: 'var(--cream)',
               padding: '48px 40px',
-              opacity: visible ? 1 : 0,
-              transform: visible ? 'translateY(0)' : 'translateY(24px)',
+              opacity: show ? 1 : 0,
+              transform: show ? 'translateY(0)' : 'translateY(24px)',
               transition: `opacity 0.7s ease ${ci * 0.1}s, transform 0.7s ease ${ci * 0.1}s`,
             }}
           >
-            {/* Category header */}
-            <p
-              style={{
-                fontFamily: 'var(--serif)',
-                fontSize: '22px',
-                fontWeight: 300,
-                fontStyle: 'italic',
-                color: 'var(--ink)',
-                marginBottom: '8px',
-              }}
-            >
+            <p style={{ fontFamily: 'var(--serif)', fontSize: '22px', fontWeight: 300, fontStyle: 'italic', color: 'var(--ink)', marginBottom: '8px' }}>
               {cat.name}
             </p>
-            <p
-              style={{
-                fontSize: '11px',
-                color: 'var(--muted)',
-                marginBottom: '32px',
-                lineHeight: 1.6,
-                letterSpacing: '0.04em',
-              }}
-            >
+            <p style={{ fontSize: '11px', color: 'var(--muted)', marginBottom: '32px', lineHeight: 1.6, letterSpacing: '0.04em' }}>
               {cat.description}
             </p>
-
-            {/* Line items */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
               {cat.items.map((item, ii) => (
                 <div
                   key={item.name}
@@ -185,24 +151,10 @@ export default function Pricing() {
                     gap: '16px',
                   }}
                 >
-                  <span
-                    style={{
-                      fontSize: '12px',
-                      color: 'var(--body-text)',
-                      letterSpacing: '0.03em',
-                    }}
-                  >
+                  <span style={{ fontSize: '12px', color: 'var(--body-text)', letterSpacing: '0.03em' }}>
                     {item.name}
                   </span>
-                  <span
-                    style={{
-                      fontSize: '12px',
-                      fontFamily: 'var(--serif)',
-                      fontStyle: 'italic',
-                      color: 'var(--ink)',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
+                  <span style={{ fontSize: '12px', fontFamily: 'var(--serif)', fontStyle: 'italic', color: 'var(--ink)', whiteSpace: 'nowrap' }}>
                     {item.price}
                   </span>
                 </div>
@@ -212,43 +164,23 @@ export default function Pricing() {
         ))}
       </div>
 
-      {/* Footnote */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '16px',
-          marginTop: '32px',
-          opacity: visible ? 1 : 0,
-          transition: 'opacity 0.7s ease 0.5s',
-        }}
-      >
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '16px',
+        marginTop: '32px',
+        opacity: show ? 1 : 0,
+        transition: 'opacity 0.7s ease 0.5s',
+      }}>
         <span style={{ color: 'var(--muted)', fontSize: '10px' }}>✦</span>
-        <p
-          style={{
-            fontSize: '11px',
-            color: 'var(--muted)',
-            letterSpacing: '0.05em',
-            lineHeight: 1.7,
-          }}
-        >
+        <p style={{ fontSize: '11px', color: 'var(--muted)', letterSpacing: '0.05em', lineHeight: 1.7 }}>
           Final pricing may vary depending on sizing, artwork &amp; custom detailing.
           Lead time is approximately <strong style={{ color: 'var(--ink)', fontWeight: 400 }}>3–4 weeks</strong>.
-          Get in touch to discuss your requirements.
         </p>
       </div>
 
-      {/* CTA */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          marginTop: '64px',
-          opacity: visible ? 1 : 0,
-          transition: 'opacity 0.7s ease 0.55s',
-        }}
-      >
-        {/* Request a Quote Button */}
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '64px', opacity: show ? 1 : 0, transition: 'opacity 0.7s ease 0.55s' }}>
+        
         <a
           href="https://docs.google.com/forms/d/e/1FAIpQLSdwusBfzkdnGIfsVbF-fR8s5yN8XuWe1XpefMZ5881dEjhwOA/viewform"
           target="_blank"

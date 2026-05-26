@@ -32,8 +32,10 @@ const STEPS = [
 export default function Process() {
   const ref = useRef<HTMLElement>(null)
   const [visible, setVisible] = useState(false)
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
     const observer = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) setVisible(true) },
       { threshold: 0.15 }
@@ -41,6 +43,8 @@ export default function Process() {
     if (ref.current) observer.observe(ref.current)
     return () => observer.disconnect()
   }, [])
+
+  const show = mounted && visible
 
   return (
     <section
@@ -51,156 +55,117 @@ export default function Process() {
         background: 'var(--cream)',
       }}
     >
-      {/* Section header */}
       <div
         style={{
           display: 'flex',
           alignItems: 'center',
           gap: '24px',
           marginBottom: '72px',
-          opacity: visible ? 1 : 0,
-          transform: visible ? 'translateY(0)' : 'translateY(20px)',
+          opacity: show ? 1 : 0,
+          transform: show ? 'translateY(0)' : 'translateY(20px)',
           transition: 'opacity 0.7s ease, transform 0.7s ease',
         }}
       >
-        <p
-          style={{
-            fontSize: '9px',
-            letterSpacing: '0.35em',
-            textTransform: 'uppercase',
-            color: 'var(--muted)',
-            whiteSpace: 'nowrap',
-          }}
-        >
+        <p style={{
+          fontSize: '9px',
+          letterSpacing: '0.35em',
+          textTransform: 'uppercase',
+          color: 'var(--muted)',
+          whiteSpace: 'nowrap',
+        }}>
           How it works
         </p>
         <div style={{ flex: 1, height: '0.5px', background: 'var(--border)' }} />
-        <h2
-          style={{
-            fontFamily: 'var(--serif)',
-            fontSize: 'clamp(28px, 3vw, 40px)',
-            fontWeight: 300,
-            fontStyle: 'italic',
-            color: 'var(--ink)',
-            whiteSpace: 'nowrap',
-          }}
-        >
+        <h2 style={{
+          fontFamily: 'var(--serif)',
+          fontSize: 'clamp(28px, 3vw, 40px)',
+          fontWeight: 300,
+          fontStyle: 'italic',
+          color: 'var(--ink)',
+          whiteSpace: 'nowrap',
+        }}>
           A seamless experience
         </h2>
       </div>
 
-      {/* Steps grid */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          border: '0.5px solid var(--border)',
-        }}
-      >
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(4, 1fr)',
+        border: '0.5px solid var(--border)',
+      }}>
         {STEPS.map((step, i) => (
           <div
             key={step.num}
             style={{
               padding: '48px 36px',
               borderRight: i < STEPS.length - 1 ? '0.5px solid var(--border)' : 'none',
-              position: 'relative',
-              opacity: visible ? 1 : 0,
-              transform: visible ? 'translateY(0)' : 'translateY(32px)',
-              transition: `opacity 0.7s ease ${i * 0.12}s, transform 0.7s ease ${i * 0.12}s`,
-              cursor: 'default',
+              background: 'transparent',
+              opacity: show ? 1 : 0,
+              transform: show ? 'translateY(0)' : 'translateY(32px)',
+              transition: `opacity 0.7s ease ${i * 0.12}s, transform 0.7s ease ${i * 0.12}s, background 0.25s`,
             }}
-            onMouseEnter={(e) => {
-              const el = e.currentTarget
-              el.style.background = 'var(--linen)'
-            }}
-            onMouseLeave={(e) => {
-              const el = e.currentTarget
-              el.style.background = 'transparent'
-            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--linen)' }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
           >
-            {/* Step number */}
-            <div
-              style={{
-                fontFamily: 'var(--serif)',
-                fontSize: '56px',
-                fontWeight: 300,
-                color: 'var(--border)',
-                lineHeight: 1,
-                marginBottom: '24px',
-                transition: 'color 0.3s',
-              }}
-            >
+            <div style={{
+              fontFamily: 'var(--serif)',
+              fontSize: '56px',
+              fontWeight: 300,
+              color: 'var(--border)',
+              lineHeight: 1,
+              marginBottom: '24px',
+            }}>
               {step.num}
             </div>
-
-            {/* Divider */}
-            <div
-              style={{
-                width: '24px',
-                height: '0.5px',
-                background: 'var(--muted)',
-                marginBottom: '20px',
-              }}
-            />
-
-            {/* Title */}
-            <p
-              style={{
-                fontSize: '10px',
-                letterSpacing: '0.2em',
-                textTransform: 'uppercase',
-                color: 'var(--ink)',
-                marginBottom: '14px',
-              }}
-            >
+            <div style={{
+              width: '24px',
+              height: '0.5px',
+              background: 'var(--muted)',
+              marginBottom: '20px',
+            }} />
+            <p style={{
+              fontSize: '10px',
+              letterSpacing: '0.2em',
+              textTransform: 'uppercase',
+              color: 'var(--ink)',
+              marginBottom: '14px',
+            }}>
               {step.title}
             </p>
-
-            {/* Description */}
-            <p
-              style={{
-                fontSize: '12px',
-                lineHeight: 1.8,
-                color: 'var(--body-text)',
-                marginBottom: '28px',
-              }}
-            >
+            <p style={{
+              fontSize: '12px',
+              lineHeight: 1.8,
+              color: 'var(--body-text)',
+              marginBottom: '28px',
+            }}>
               {step.desc}
             </p>
-
-            {/* Detail tag */}
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                fontSize: '8px',
-                letterSpacing: '0.2em',
-                textTransform: 'uppercase',
-                color: 'var(--muted)',
-              }}
-            >
-              <span>✦</span>
-              {step.detail}
+            <div style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              fontSize: '8px',
+              letterSpacing: '0.2em',
+              textTransform: 'uppercase',
+              color: 'var(--muted)',
+            }}>
+              <span>✦</span>{step.detail}
             </div>
           </div>
         ))}
       </div>
 
-      {/* Bottom CTA line */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          marginTop: '56px',
-          gap: '24px',
-          opacity: visible ? 1 : 0,
-          transition: 'opacity 0.7s ease 0.6s',
-        }}
-      >
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: '56px',
+        gap: '24px',
+        opacity: show ? 1 : 0,
+        transition: 'opacity 0.7s ease 0.6s',
+      }}>
         <div style={{ flex: 1, height: '0.5px', background: 'var(--border)' }} />
-
+        
         {/* CTA Button */}
         <a
           href="https://docs.google.com/forms/d/e/1FAIpQLSdwusBfzkdnGIfsVbF-fR8s5yN8XuWe1XpefMZ5881dEjhwOA/viewform"
@@ -230,7 +195,6 @@ export default function Process() {
         >
           Start your bespoke order <span>→</span>
         </a>
-
         <div style={{ flex: 1, height: '0.5px', background: 'var(--border)' }} />
       </div>
     </section>

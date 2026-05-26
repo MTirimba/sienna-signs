@@ -35,9 +35,9 @@ export default function Navbar() {
       <Image
         src="/Media/SIENNA SIGNS.png"
         alt="Sienna Signs"
-        width={120}
-        height={48}
-        style={{ objectFit: 'contain', objectPosition: 'left center' }}
+        width={140}
+        height={52}
+        style={{ objectFit: 'contain' }}
         priority
       />
 

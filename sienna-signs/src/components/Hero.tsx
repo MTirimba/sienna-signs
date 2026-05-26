@@ -25,7 +25,7 @@ export default function Hero() {
 
   return (
     <>
-      {/* HERO */}
+      {/* HERO SECTION */}
       <section
         style={{
           display: 'grid',
@@ -100,7 +100,7 @@ export default function Hero() {
             — each piece is entirely, uniquely yours.
           </p>
 
-          {/* Trust pill */}
+          {/* Trust pills */}
           <div
             style={{
               display: 'inline-flex',
@@ -112,9 +112,7 @@ export default function Hero() {
           >
             {['Fabric & Acrylic', '3–4 week lead time', 'UK Delivery'].map((pill, i) => (
               <div key={pill} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                {i > 0 && (
-                  <span style={{ color: 'var(--border)', fontSize: '8px' }}>·</span>
-                )}
+                {i > 0 && <span style={{ color: 'var(--border)', fontSize: '8px' }}>·</span>}
                 <span
                   style={{
                     fontSize: '9px',
@@ -191,7 +189,7 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* RIGHT — Full bleed hero image */}
+        {/* RIGHT — Hero Image */}
         <div
           style={{
             position: 'relative',
@@ -217,7 +215,7 @@ export default function Hero() {
             />
           </div>
 
-          {/* Subtle left edge vignette */}
+          {/* Vignette */}
           <div
             style={{
               position: 'absolute',
@@ -270,7 +268,7 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Vertical edge text */}
+          {/* Vertical text */}
           <p
             style={{
               position: 'absolute',

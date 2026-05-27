@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
+import { useWindowSize } from '@/hooks/useWindowSize'
 
 const TABS = ['All', 'Fabric', 'Acrylic'] as const
 type Tab = typeof TABS[number]
@@ -21,12 +22,13 @@ export default function Gallery() {
   const [mounted, setMounted] = useState(false)
   const [hovered, setHovered] = useState<number | null>(null)
   const [activeTab, setActiveTab] = useState<Tab>('All')
+  const { isMobile, isTablet } = useWindowSize()
 
   useEffect(() => {
     setMounted(true)
     const observer = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) setVisible(true) },
-      { threshold: 0.1 }
+      { threshold: 0.05 }
     )
     if (ref.current) observer.observe(ref.current)
     return () => observer.disconnect()
@@ -35,35 +37,43 @@ export default function Gallery() {
   const show = mounted && visible
   const filtered = ITEMS.filter((item) => activeTab === 'All' || item.tag === activeTab)
 
+  const getGridCols = () => {
+    if (isMobile) return '1fr'
+    if (isTablet) return '1fr 1fr'
+    return filtered.length > 2 ? '1.5fr 1fr 1fr' : 'repeat(auto-fill, minmax(300px, 1fr))'
+  }
+
+  const getGridRows = () => {
+    if (isMobile) return 'auto'
+    if (isTablet) return '280px'
+    return filtered.length > 3 ? '320px 240px' : '360px'
+  }
+
   return (
     <section
       ref={ref}
       style={{
-        padding: '120px 80px',
+        padding: isMobile ? '72px 24px' : isTablet ? '80px 40px' : '120px 80px',
         borderBottom: '0.5px solid var(--border)',
         background: 'var(--linen)',
       }}
     >
       <div style={{
         display: 'flex',
-        alignItems: 'flex-end',
+        flexDirection: isMobile ? 'column' : 'row',
+        alignItems: isMobile ? 'flex-start' : 'flex-end',
         justifyContent: 'space-between',
-        marginBottom: '48px',
+        gap: isMobile ? '16px' : '0',
+        marginBottom: '40px',
         opacity: show ? 1 : 0,
         transform: show ? 'translateY(0)' : 'translateY(20px)',
         transition: 'opacity 0.7s ease, transform 0.7s ease',
       }}>
         <div>
-          <p style={{
-            fontSize: '9px',
-            letterSpacing: '0.35em',
-            textTransform: 'uppercase',
-            color: 'var(--muted)',
-            marginBottom: '16px',
-          }}>Our work</p>
+          <p style={{ fontSize: '9px', letterSpacing: '0.35em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '16px' }}>Our work</p>
           <h2 style={{
             fontFamily: 'var(--serif)',
-            fontSize: 'clamp(36px, 4vw, 56px)',
+            fontSize: isMobile ? '36px' : 'clamp(36px, 4vw, 56px)',
             fontWeight: 300,
             fontStyle: 'italic',
             color: 'var(--ink)',
@@ -86,16 +96,7 @@ export default function Gallery() {
             textDecoration: 'none',
             borderBottom: '0.5px solid var(--border)',
             paddingBottom: '2px',
-            marginBottom: '6px',
-            transition: 'color 0.2s, border-color 0.2s',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.color = 'var(--ink)'
-            e.currentTarget.style.borderColor = 'var(--ink)'
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.color = 'var(--body-text)'
-            e.currentTarget.style.borderColor = 'var(--border)'
+            transition: 'color 0.2s',
           }}
         >
           View all on Instagram →
@@ -107,7 +108,7 @@ export default function Gallery() {
         display: 'flex',
         marginBottom: '32px',
         border: '0.5px solid var(--border)',
-        width: 'fit-content',
+        width: isMobile ? '100%' : 'fit-content',
         opacity: show ? 1 : 0,
         transition: 'opacity 0.7s ease 0.1s',
       }}>
@@ -116,6 +117,7 @@ export default function Gallery() {
             key={tab}
             onClick={() => setActiveTab(tab)}
             style={{
+              flex: isMobile ? 1 : 'none',
               padding: '10px 28px',
               fontSize: '9px',
               letterSpacing: '0.22em',
@@ -136,19 +138,20 @@ export default function Gallery() {
       {/* Grid */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: filtered.length > 2 ? '1.5fr 1fr 1fr' : 'repeat(auto-fill, minmax(300px, 1fr))',
-        gridTemplateRows: filtered.length > 3 ? '320px 240px' : '360px',
+        gridTemplateColumns: getGridCols(),
+        gridTemplateRows: getGridRows(),
         gap: '6px',
       }}>
         {filtered.map((item, i) => (
           <div
             key={`${item.src}-${i}`}
             style={{
-              gridRow: i === 0 && filtered.length > 3 ? 'span 2' : 'auto',
+              gridRow: (!isMobile && !isTablet) && i === 0 && filtered.length > 3 ? 'span 2' : 'auto',
               position: 'relative',
               overflow: 'hidden',
               border: '0.5px solid var(--sand-dark)',
               cursor: 'pointer',
+              height: isMobile ? '260px' : 'auto',
               opacity: show ? 1 : 0,
               transform: show ? 'scale(1)' : 'scale(0.97)',
               transition: `opacity 0.6s ease ${i * 0.07}s, transform 0.6s ease ${i * 0.07}s`,
@@ -166,15 +169,15 @@ export default function Gallery() {
                 transform: hovered === i ? 'scale(1.04)' : 'scale(1)',
                 transition: 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
               }}
-              sizes={i === 0 ? '40vw' : '25vw'}
+              sizes={isMobile ? '100vw' : i === 0 ? '40vw' : '25vw'}
             />
             <div style={{
-              position: 'absolute',
-              inset: 0,
+              position: 'absolute', inset: 0,
               background: 'rgba(44,42,37,0.35)',
               opacity: hovered === i ? 1 : 0,
               transition: 'opacity 0.35s ease',
             }} />
+            {/* Label — always visible on mobile, hover on desktop */}
             <div style={{
               position: 'absolute',
               bottom: 0, left: 0, right: 0,
@@ -185,7 +188,7 @@ export default function Gallery() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              transform: hovered === i ? 'translateY(0)' : 'translateY(100%)',
+              transform: isMobile ? 'translateY(0)' : hovered === i ? 'translateY(0)' : 'translateY(100%)',
               transition: 'transform 0.32s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
             }}>
               <div>
@@ -219,4 +222,4 @@ export default function Gallery() {
       </div>
     </section>
   )
-}'
+}

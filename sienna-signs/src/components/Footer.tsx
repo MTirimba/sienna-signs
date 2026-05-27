@@ -1,5 +1,7 @@
 'use client'
 
+import { useWindowSize } from '@/hooks/useWindowSize'
+
 const LINKS = {
   Explore: ['Our Work', 'Process', 'About', 'Contact'],
   Services: ['Welcome Signs', 'Seating Charts', 'Table Numbers', 'Menus & More'],
@@ -13,61 +15,32 @@ const LINK_HREFS: Record<string, string> = {
 }
 
 export default function Footer() {
+  const { isMobile, isTablet } = useWindowSize()
+
   return (
-    <footer
-      style={{
-        background: 'var(--ink)',
-        color: 'var(--cream)',
-        padding: '80px 80px 40px',
-      }}
-    >
-      {/* Top row */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1.5fr 1fr 1fr 1fr',
-          gap: '48px',
-          paddingBottom: '64px',
-          borderBottom: '0.5px solid rgba(255,255,255,0.08)',
-          marginBottom: '40px',
-        }}
-      >
-        {/* Brand column */}
+    <footer style={{ background: 'var(--ink)', color: 'var(--cream)', padding: isMobile ? '56px 24px 32px' : '80px 80px 40px' }}>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: isMobile ? '1fr' : isTablet ? '1fr 1fr' : '1.5fr 1fr 1fr 1fr',
+        gap: isMobile ? '48px' : '48px',
+        paddingBottom: '48px',
+        borderBottom: '0.5px solid rgba(255,255,255,0.08)',
+        marginBottom: '32px',
+      }}>
+        {/* Brand */}
         <div>
-          <p
-            style={{
-              fontFamily: 'var(--serif)',
-              fontSize: '22px',
-              fontWeight: 400,
-              letterSpacing: '0.15em',
-              textTransform: 'uppercase',
-              color: 'var(--cream)',
-              marginBottom: '20px',
-            }}
-          >
+          <p style={{ fontFamily: 'var(--serif)', fontSize: '22px', fontWeight: 400, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--cream)', marginBottom: '16px' }}>
             Sienna Signs
           </p>
-          <p
-            style={{
-              fontSize: '12px',
-              lineHeight: 1.85,
-              color: 'var(--muted)',
-              marginBottom: '32px',
-              maxWidth: '240px',
-            }}
-          >
+          <p style={{ fontSize: '12px', lineHeight: 1.85, color: 'var(--muted)', marginBottom: '28px', maxWidth: '240px' }}>
             Bespoke wedding &amp; event signage crafted with care. Every piece designed around your unique vision.
           </p>
-
-          {/* CTA Button */}
+          
           <a
             href="https://docs.google.com/forms/d/e/1FAIpQLSdwusBfzkdnGIfsVbF-fR8s5yN8XuWe1XpefMZ5881dEjhwOA/viewform"
             target="_blank"
             rel="noopener noreferrer"
             style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '10px',
               fontSize: '9px',
               letterSpacing: '0.25em',
               textTransform: 'uppercase',
@@ -84,23 +57,16 @@ export default function Footer() {
           </a>
         </div>
 
-        {/* Link columns */}
+        {/* Link columns — stack on mobile */}
         {Object.entries(LINKS).map(([heading, items]) => (
           <div key={heading}>
-            <p
-              style={{
-                fontSize: '8px',
-                letterSpacing: '0.3em',
-                textTransform: 'uppercase',
-                color: 'var(--muted)',
-                marginBottom: '24px',
-              }}
-            >
+            <p style={{ fontSize: '8px', letterSpacing: '0.3em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '20px' }}>
               {heading}
             </p>
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
               {items.map((item) => (
                 <li key={item}>
+                  
                   <a
                     href={LINK_HREFS[item] || '#'}
                     target={LINK_HREFS[item] ? '_blank' : undefined}
@@ -110,7 +76,6 @@ export default function Footer() {
                       color: 'rgba(253,252,249,0.55)',
                       textDecoration: 'none',
                       transition: 'color 0.2s',
-                      letterSpacing: '0.05em',
                     }}
                     onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--cream)')}
                     onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(253,252,249,0.55)')}
@@ -124,45 +89,24 @@ export default function Footer() {
         ))}
       </div>
 
-      {/* Bottom row */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
-        <p
-          style={{
-            fontSize: '9px',
-            letterSpacing: '0.15em',
-            color: 'rgba(253,252,249,0.25)',
-          }}
-        >
+      <div style={{
+        display: 'flex',
+        flexDirection: isMobile ? 'column' : 'row',
+        alignItems: isMobile ? 'flex-start' : 'center',
+        justifyContent: 'space-between',
+        gap: isMobile ? '12px' : '0',
+      }}>
+        <p style={{ fontSize: '9px', letterSpacing: '0.15em', color: 'rgba(253,252,249,0.25)' }}>
           © {new Date().getFullYear()} Sienna Signs. All rights reserved.
         </p>
-
-        <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-          {['✦', '✦', '✦'].map((s, i) => (
-            <span
-              key={i}
-              style={{
-                fontSize: i === 1 ? '10px' : '6px',
-                color: 'rgba(253,252,249,0.2)',
-              }}
-            >
-              {s}
-            </span>
-          ))}
-        </div>
-
-        <p
-          style={{
-            fontSize: '9px',
-            letterSpacing: '0.15em',
-            color: 'rgba(253,252,249,0.25)',
-          }}
-        >
+        {!isMobile && (
+          <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+            {['✦', '✦', '✦'].map((s, i) => (
+              <span key={i} style={{ fontSize: i === 1 ? '10px' : '6px', color: 'rgba(253,252,249,0.2)' }}>{s}</span>
+            ))}
+          </div>
+        )}
+        <p style={{ fontSize: '9px', letterSpacing: '0.15em', color: 'rgba(253,252,249,0.25)' }}>
           Designed with intention.
         </p>
       </div>

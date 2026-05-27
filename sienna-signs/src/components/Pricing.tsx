@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { useWindowSize } from '@/hooks/useWindowSize'
 
 const CATEGORIES = [
   {
@@ -54,12 +55,13 @@ export default function Pricing() {
   const ref = useRef<HTMLElement>(null)
   const [visible, setVisible] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const { isMobile, isTablet } = useWindowSize()
 
   useEffect(() => {
     setMounted(true)
     const observer = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) setVisible(true) },
-      { threshold: 0.1 }
+      { threshold: 0.05 }
     )
     if (ref.current) observer.observe(ref.current)
     return () => observer.disconnect()
@@ -71,15 +73,16 @@ export default function Pricing() {
     <section
       ref={ref}
       style={{
-        padding: '120px 80px',
+        padding: isMobile ? '72px 24px' : isTablet ? '80px 40px' : '120px 80px',
         borderBottom: '0.5px solid var(--border)',
         background: 'var(--cream)',
       }}
     >
       <div style={{
         display: 'flex',
-        alignItems: 'center',
-        gap: '24px',
+        flexDirection: isMobile ? 'column' : 'row',
+        alignItems: isMobile ? 'flex-start' : 'center',
+        gap: isMobile ? '12px' : '24px',
         marginBottom: '16px',
         opacity: show ? 1 : 0,
         transform: show ? 'translateY(0)' : 'translateY(20px)',
@@ -88,14 +91,14 @@ export default function Pricing() {
         <p style={{ fontSize: '9px', letterSpacing: '0.35em', textTransform: 'uppercase', color: 'var(--muted)', whiteSpace: 'nowrap' }}>
           Investment
         </p>
-        <div style={{ flex: 1, height: '0.5px', background: 'var(--border)' }} />
+        {!isMobile && <div style={{ flex: 1, height: '0.5px', background: 'var(--border)' }} />}
         <h2 style={{
           fontFamily: 'var(--serif)',
-          fontSize: 'clamp(28px, 3vw, 40px)',
+          fontSize: isMobile ? '32px' : 'clamp(28px, 3vw, 40px)',
           fontWeight: 300,
           fontStyle: 'italic',
           color: 'var(--ink)',
-          whiteSpace: 'nowrap',
+          whiteSpace: isMobile ? 'normal' : 'nowrap',
         }}>
           Transparent pricing
         </h2>
@@ -105,8 +108,8 @@ export default function Pricing() {
         fontSize: '12px',
         lineHeight: 1.8,
         color: 'var(--body-text)',
-        marginBottom: '64px',
-        textAlign: 'right',
+        marginBottom: '48px',
+        textAlign: isMobile ? 'left' : 'right',
         opacity: show ? 1 : 0,
         transition: 'opacity 0.7s ease 0.1s',
       }}>
@@ -116,7 +119,7 @@ export default function Pricing() {
 
       <div style={{
         display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
+        gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
         gap: '1px',
         border: '0.5px solid var(--border)',
         background: 'var(--border)',
@@ -126,7 +129,7 @@ export default function Pricing() {
             key={cat.name}
             style={{
               background: 'var(--cream)',
-              padding: '48px 40px',
+              padding: isMobile ? '36px 28px' : '48px 40px',
               opacity: show ? 1 : 0,
               transform: show ? 'translateY(0)' : 'translateY(24px)',
               transition: `opacity 0.7s ease ${ci * 0.1}s, transform 0.7s ease ${ci * 0.1}s`,
@@ -135,25 +138,20 @@ export default function Pricing() {
             <p style={{ fontFamily: 'var(--serif)', fontSize: '22px', fontWeight: 300, fontStyle: 'italic', color: 'var(--ink)', marginBottom: '8px' }}>
               {cat.name}
             </p>
-            <p style={{ fontSize: '11px', color: 'var(--muted)', marginBottom: '32px', lineHeight: 1.6, letterSpacing: '0.04em' }}>
+            <p style={{ fontSize: '11px', color: 'var(--muted)', marginBottom: '32px', lineHeight: 1.6 }}>
               {cat.description}
             </p>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               {cat.items.map((item, ii) => (
-                <div
-                  key={item.name}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'baseline',
-                    justifyContent: 'space-between',
-                    padding: '12px 0',
-                    borderBottom: ii < cat.items.length - 1 ? '0.5px solid var(--border)' : 'none',
-                    gap: '16px',
-                  }}
-                >
-                  <span style={{ fontSize: '12px', color: 'var(--body-text)', letterSpacing: '0.03em' }}>
-                    {item.name}
-                  </span>
+                <div key={item.name} style={{
+                  display: 'flex',
+                  alignItems: 'baseline',
+                  justifyContent: 'space-between',
+                  padding: '12px 0',
+                  borderBottom: ii < cat.items.length - 1 ? '0.5px solid var(--border)' : 'none',
+                  gap: '16px',
+                }}>
+                  <span style={{ fontSize: '12px', color: 'var(--body-text)' }}>{item.name}</span>
                   <span style={{ fontSize: '12px', fontFamily: 'var(--serif)', fontStyle: 'italic', color: 'var(--ink)', whiteSpace: 'nowrap' }}>
                     {item.price}
                   </span>
@@ -164,22 +162,15 @@ export default function Pricing() {
         ))}
       </div>
 
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '16px',
-        marginTop: '32px',
-        opacity: show ? 1 : 0,
-        transition: 'opacity 0.7s ease 0.5s',
-      }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '32px', opacity: show ? 1 : 0, transition: 'opacity 0.7s ease 0.5s' }}>
         <span style={{ color: 'var(--muted)', fontSize: '10px' }}>✦</span>
-        <p style={{ fontSize: '11px', color: 'var(--muted)', letterSpacing: '0.05em', lineHeight: 1.7 }}>
+        <p style={{ fontSize: '11px', color: 'var(--muted)', lineHeight: 1.7 }}>
           Final pricing may vary depending on sizing, artwork &amp; custom detailing.
           Lead time is approximately <strong style={{ color: 'var(--ink)', fontWeight: 400 }}>3–4 weeks</strong>.
         </p>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '64px', opacity: show ? 1 : 0, transition: 'opacity 0.7s ease 0.55s' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '56px', opacity: show ? 1 : 0, transition: 'opacity 0.7s ease 0.55s' }}>
         
         <a
           href="https://docs.google.com/forms/d/e/1FAIpQLSdwusBfzkdnGIfsVbF-fR8s5yN8XuWe1XpefMZ5881dEjhwOA/viewform"
@@ -196,6 +187,8 @@ export default function Pricing() {
             textDecoration: 'none',
             border: '0.5px solid var(--ink)',
             padding: '16px 40px',
+            width: isMobile ? '100%' : 'auto',
+            justifyContent: 'center',
             transition: 'background 0.25s, color 0.25s',
           }}
           onMouseEnter={(e) => {
